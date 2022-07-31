@@ -1,0 +1,48 @@
+﻿<div class="modal fade" data-backdrop="static" data-keyboard="false" id="deleteModelConfirmation"role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmTitle">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close"@onclick="()=>OnConfimration(false)" >
+                    <span aria-hidden="true">&times;</span>
+
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure to Delete
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="close" @onclick="()=>OnConfimration(false)">
+                    Cancle
+                </button>
+              
+                    <button type="button" class="btn btn-danger" @onclick="()=>OnConfimration(true)">
+                        Delete
+                    </button>
+              
+
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+
+    [Parameter]
+    public EventCallback<bool> DeleteConfirm { get; set; }
+    
+    private async Task OnConfimration(bool isConfirmed)
+    {
+        //if (isConfirmed)
+        //{
+        //    IsProsseced = true;
+        //}
+        await DeleteConfirm.InvokeAsync(isConfirmed);
+    }
+
+    //protected override void OnParametersSet()
+    //{
+    //    IsProsseced = IsProssecdParent;
+    //}
+
+
+}

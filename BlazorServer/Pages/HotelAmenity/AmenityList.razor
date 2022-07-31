@@ -1,0 +1,100 @@
+﻿@page "/hotel-amenity/"
+@inject IHotelAmenity hotelRep
+@inject IJSRuntime JSRuntime
+
+
+<h3>Amenity List</h3>
+
+<div class="row mt-4">
+    <div class="col-8">
+        <h3>Add New Room</h3>
+    </div>
+    <div class="col-3 offset-1">
+        <NavLink href="hotel-amenity/create" class="btn btn-info form-control">Add New Amenity </NavLink>
+    </div>
+
+</div>
+<div class="row mt-4">
+    <div class="col-12">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>IconStyle</th>
+                    
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (hotelAmenities.Any())
+                {
+                    @foreach (var item in hotelAmenities)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                            <td>
+                                <i class="material-icons spinner text-success  opacity-10">
+                                    @item.IconStyle
+                                </i>
+                            </td>
+                            
+                            <td>
+
+                                <NavLink href=@($"hotel-amenity/edit/{item.Id}") class="btn btn-primary">Edit</NavLink>
+                                <button type="button" class="btn btn-danger" @onclick="()=>HandleDelte(item.Id)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td>No Data Yet</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<DeleteConfirmationComponant DeleteConfirm="ConfirmDelete"></DeleteConfirmationComponant>
+
+@code {
+    public int? Id { get; set; }
+
+    IEnumerable<HotelAmenityDTO> hotelAmenities = new List<HotelAmenityDTO>();
+    protected override async Task OnInitializedAsync()
+    {
+        hotelAmenities = await hotelRep.GetAll();
+
+
+    }
+    public async Task HandleDelte(int id)
+    {
+
+        Id = id;
+        await JSRuntime.InvokeVoidAsync("showDelteModal");
+    }
+
+    public async Task ConfirmDelete(bool isConfirmed)
+    {
+        try
+        {
+            if (isConfirmed && Id != null)
+            {
+                 await hotelRep.Delete(Id.Value);
+               
+                    await JSRuntime.ToasterSucess("Delted sucess");
+                    hotelAmenities = await hotelRep.GetAll();
+                
+            }
+            await JSRuntime.InvokeVoidAsync("hideDelteModal");
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+
+    }
+}

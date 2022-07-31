@@ -1,0 +1,120 @@
+﻿@page "/demohotel"
+@using BlazorServer.Data.Model
+@using BlazorServer.Model
+
+<h3>DemoHotel</h3>
+
+<div class="border p-2 mt-2" style="background-color:azure ">
+    <h2 class="text-info"> Room List</h2>
+    <p>room selected - @Counter</p>
+    <div class=" row container">
+
+        @foreach (var item in rooms)
+        {
+            <IndiviualRoom  MyProperty="onChange"   Room="item"></IndiviualRoom>
+
+
+        }
+    </div>
+
+    <h2 class="text-info">HotelsMohammed</h2>
+    <div class=" row container">
+        @foreach (var item in Hotels)
+        {
+            <HotelAmnies MyProperty="onClick" Hotel="item"></HotelAmnies>
+
+
+        }
+    </div>
+    <p>the hotel is : @Name</p>
+</div>
+
+
+@code {
+    public int Counter { get; set; } = 0;
+
+    public string Name { get; set; }
+    List<BlazorRoom> rooms = new List<BlazorRoom>();
+    List<HotelAmnie> Hotels = new List<HotelAmnie>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Hotels.Add(
+          new HotelAmnie()
+          {
+              Id = 1,
+              Name = "Gym"
+              ,
+              Description = "asfasjodkasjd"
+          });
+        Hotels.Add(
+            new HotelAmnie()
+            {
+                Id = 4,
+                Name = "pool"
+                ,
+                Description = "Mohammmed"
+            });
+        Hotels.Add(
+            new HotelAmnie()
+            {
+                Id = 3,
+                Name = "pasdjvasiudviool"
+                ,
+                Description = "Galal"
+            }
+            );
+        rooms.Add(
+        new BlazorRoom()
+        {
+            Id = 1,
+            RoomName = "villa"
+        ,
+            Price = 432,
+            IsActive = false,
+            RoomProps = new List<Model.BlazorRoomProp>()
+        {
+               new Model.BlazorRoomProp{Id = 1 , Name =  "Sq Ft" , Value = "100"},
+               new Model.BlazorRoomProp{Id = 2 , Name =  "asod" , Value = "3"},
+            }
+        }
+        );
+        rooms.Add(
+            new BlazorRoom()
+            {
+                Id = 2,
+                RoomName = "villa2"
+            ,
+                Price = 1000,
+                IsActive = false,
+                RoomProps = new List<Model.BlazorRoomProp>()
+            {
+               new Model.BlazorRoomProp{Id = 1 , Name =  "Sq Ft" , Value = "141"},
+               new Model.BlazorRoomProp{Id = 2 , Name =  "asod" , Value = "53"},
+                }
+            }
+            );
+    }
+
+    protected void onChange(bool isChanged)
+    {
+        if (isChanged )
+        {
+            Counter++;
+
+        }
+        else
+        {
+            Counter--;
+        }
+    }
+
+    protected void onClick( string hotelName)
+        {
+        Name = hotelName;
+        }
+
+
+}
+

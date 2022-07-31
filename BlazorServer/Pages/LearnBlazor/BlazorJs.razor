@@ -1,0 +1,38 @@
+﻿@page "/blazor-js"
+@inject IJSRuntime jsRunTime
+<h3>BlazorJs</h3>
+<button class="btn btn-primary" @onclick="()=>TestConfirmation(ConfirmMessag)">Test </button>
+<button class="btn btn-success" @onclick="TestSucess">Test </button>
+<button class="btn btn-danger" @onclick="TestError">Test </button>
+@if (Confirm)
+{
+    <p class="text-info">yes</p>
+}
+else
+{
+    <p class="text-danger">Noooooooooooooooooooo</p>
+}
+@code {
+    private string ConfirmMessag = "Are You Sure";
+    public bool Confirm { get; set; }
+    private async Task TestConfirmation(string message)
+    {
+
+        Confirm = await jsRunTime.InvokeAsync<bool>("confirm", message);
+    }
+
+    private async Task TestSucess()
+    {
+
+        await jsRunTime.ToasterSucess("MOoooooooooooooooooooo");
+        await jsRunTime.SwalSucess("asjkdghfsjtdj");
+    }
+
+    private async Task TestError()
+    {
+
+        await jsRunTime.ToasterError("Failedddd");
+        await jsRunTime.SwalError("Fuckkkkkk");
+    }
+
+}

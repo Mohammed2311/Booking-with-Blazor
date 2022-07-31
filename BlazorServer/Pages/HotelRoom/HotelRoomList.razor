@@ -1,0 +1,101 @@
+﻿@page "/hotel-room"
+@inject IHotelRep hotelRep
+@inject IJSRuntime JSRuntime
+@using BlazorServer.Services.IServices
+@inject IFileUploader fileUpload 
+@inject NavigationManager navigation 
+<h3>HotelRoomList</h3>
+
+<div class="row mt-4">
+    <div class="col-8">
+        <h3>Add New Room</h3>
+    </div>
+    <div class="col-3 offset-1" >
+        <NavLink href ="hotel-room/create" class="btn btn-info form-control">Add New Room </NavLink>
+    </div>
+
+</div>
+<div class="row mt-4">
+    <div class="col-12">
+        <table class="table table-bordered table-hover" >
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Ocuupancy</th>
+                    <th>Rate</th>
+                    <th>SqFt</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (HotelRooms.Any())
+                {
+                    @foreach (var item in HotelRooms)
+                    {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Occupancy</td>
+                    <td>@item.RegularRate.ToString("c")</td>
+                    <td>@item.SqFt</td>
+                    <td>
+
+                        <NavLink href=@($"hotel-room/edit/{item.Id}") class="btn btn-primary">Edit</NavLink>
+                        <button type="button" class="btn btn-danger" @onclick="()=>HandleDelte(item.Id)">Delete</button>
+                    </td>
+                </tr>
+                    }
+                }
+                 else
+	{
+	         <tr><td>No Data Yet</td></tr>
+	}
+            </tbody>
+        </table>
+    </div>
+</div>
+<DeleteConfirmationComponant  DeleteConfirm="ConfirmationDelete"></DeleteConfirmationComponant>
+@code {
+    public IEnumerable<HotelRoomDTO> HotelRooms { get; set; } = new List<HotelRoomDTO>();
+    private  int? RoomId { get; set; }
+    public bool IsParentProsessing { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        HotelRooms = await hotelRep.GetAll();
+    }
+
+
+    private async Task HandleDelte(int Id)
+    {
+        RoomId = Id;
+        await JSRuntime.InvokeVoidAsync("showDelteModal");
+
+    }
+
+    private async Task ConfirmationDelete(bool isConfirmed)
+    {
+        IsParentProsessing = true;
+        if (isConfirmed&& RoomId!=null)
+        {
+
+            var hotelRoom = await hotelRep.GetHotelRoom(RoomId.Value);
+            foreach (var item in hotelRoom.HotelRoomImages)
+            {
+                var imgName = item.ImgUrl.Replace($"{navigation.BaseUri}RoomImgs/", "");
+                fileUpload.DeleteFile(imgName);
+
+            }
+            await hotelRep.Delete(RoomId.Value);
+
+
+            await JSRuntime.ToasterSucess("Delted Succesfully");
+
+            HotelRooms = await hotelRep.GetAll();
+        }
+        await JSRuntime.InvokeVoidAsync("hideDelteModal");
+        IsParentProsessing = false;
+
+    }
+}

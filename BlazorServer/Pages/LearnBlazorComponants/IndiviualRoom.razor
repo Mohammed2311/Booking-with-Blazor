@@ -1,0 +1,38 @@
+﻿@using BlazorServer.Data.Model
+
+<div class="bg-light p-2 m-2 col-5">
+    <h4 class="text-secondary"> @Room.Id</h4>
+    <input type="checkbox" name="name" @onchange="CallFunction"/> @Room.RoomName
+    <br />
+    @Room.Price
+    <br />
+    <input type="checkbox" checked="@(Room.IsActive?"checked":null)" @bind-value="Room.IsActive" />&nbsp; Is Active
+
+
+
+    <br />
+
+    <span> This Room is @(Room.IsActive?"Active ": "InActive")</span>
+
+    @if (Room.IsActive)
+    {
+        foreach (var Room1 in Room.RoomProps)
+        {
+            <p>@Room1.Name - @Room1.Value</p>
+        }
+    }
+
+    <EditDeleteButton IsAdmin="false"></EditDeleteButton>
+</div>
+
+@code {
+    [Parameter]
+    public BlazorRoom Room { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> MyProperty { get; set; }
+    protected async Task CallFunction(ChangeEventArgs e)
+        {
+        await MyProperty.InvokeAsync((bool)e.Value);
+        }
+}

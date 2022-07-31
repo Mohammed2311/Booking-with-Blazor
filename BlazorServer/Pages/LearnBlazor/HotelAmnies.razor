@@ -1,0 +1,32 @@
+﻿@using BlazorServer.Model
+
+<div class="bg-light p-2 mt-5 mx-2 col-5" @onclick ="(args)=>ClickBox(args , Hotel.Name)">
+    <h4 class="text-secondary"> @Hotel.Id</h4>
+    @Hotel.Name
+    <br />
+    @Hotel.Description
+    <br />
+
+
+
+    <br />
+
+
+   
+
+    <EditDeleteButton IsAdmin="true"></EditDeleteButton>
+</div>
+
+@code {
+    [Parameter]
+    public HotelAmnie Hotel { get; set; }
+
+    [Parameter]
+    public EventCallback<string> MyProperty { get; set; }
+    protected async Task ClickBox(MouseEventArgs e , string name)
+        {
+       
+        await MyProperty.InvokeAsync( name);
+        }
+
+}
